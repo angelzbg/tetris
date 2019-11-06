@@ -1,0 +1,13 @@
+.tile {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 8.333333333333333vmin;
+  height: 8.333333333333333vmin;
+}
+
+.block {
+  position: absolute;
+  width: 8.333333333333333vmin;
+  height: 8.333333333333333vmin;
+}
