@@ -29,7 +29,7 @@ export default class App extends React.Component {
         type: -1,
         blocks: []
       },
-      pseudoBorderDiv: <div style={{position: "relative", width: "100%", height: "100%", border: "1px solid white"}} />
+      pseudoBorderDiv: <div style={{position: "relative", width: "calc(100% - 2px)", height: "calc(100% - 2px)", border: "1px solid white",}} />
     }
 
     this.keyHandling = this.keyHandling.bind(this);
@@ -75,11 +75,13 @@ export default class App extends React.Component {
       }
       {
           this.state.gameState === 3 ?
-          <p style={{position: "absolute", left: 0, top: "50px"}}>YOU WON</p>
+          <p style={{position: "absolute", left: 0, top: "40px"}}>YOU WON</p>
           : this.state.gameState === 4 ?
-          <p style={{position: "absolute", left: 0, top: "50px"}}>YOU LOST</p>
+          <p style={{position: "absolute", left: 0, top: "40px"}}>YOU LOST</p>
           : this.props.textOrHtml
       }
+      <p style={{position: "absolute", left: 0, top: "60px"}}>Rotation - SPACEBAR</p>
+      <p style={{position: "absolute", left: 0, top: "80px"}}>Movement - Arrows R L</p>
       </center>
     )
   } // render()
