@@ -30,7 +30,7 @@ export default class App extends React.Component {
       },
       pseudoBorderDiv: <div style={{position: "relative", width: "calc(100% - 2px)", height: "calc(100% - 2px)", border: "1px solid white",}} />,
       score: 0,
-      level: 1
+      currentSpeed: 500
     }
 
     this.keyHandling = this.keyHandling.bind(this);
@@ -86,18 +86,18 @@ export default class App extends React.Component {
       }
       {
           this.state.gameState === 3 ?
-          <p style={{position: "absolute", left: 0, top: "40px"}}>Game Over! You reached level {this.state.level}</p>
+          <p style={{position: "absolute", left: 0, top: "40px"}}>You won at level {this.state.level}</p>
           : this.state.gameState === 4 ?
           <p style={{position: "absolute", left: 0, top: "40px"}}>YOU LOST</p>
           : this.props.textOrHtml
       }
       <p style={{position: "absolute", left: 0, top: "60px"}}>Rotation - SPACEBAR</p>
-      <p style={{position: "absolute", left: 0, top: "80px"}}>Movement - Arrows R L</p>
+      <p style={{position: "absolute", left: 0, top: "80px"}}>Movement - Arrows R L D</p>
       {
         this.state.gameState !== 1 ?
         <div style={{position: "absolute", left:"10px", top: "120px", backgroundColor: "#0099ff", paddingLeft: "10px", paddingRight: "10px", borderRadius: "5px"}}>
           <p>Score: {this.state.score}</p>
-          <p>Level: {this.state.level}</p>
+          <p>Current speed: {this.state.currentSpeed}</p>
         </div>
         : this.props.textOrHtml
       }
@@ -123,7 +123,7 @@ export default class App extends React.Component {
       gameState: 2, // 1 = not started (initial), 2 = started, 3 = win, 4 = lose
       tiles: tiles,
       score: 0,
-      level: 1
+      currentSpeed: 500
     }, () => {
       this.moveFigureDown();
     });
@@ -133,7 +133,9 @@ export default class App extends React.Component {
   } // startNewGame()
 
   moveFigureDown() {
-    if(this.state.gameState !== 2) return;
+    if(this.state.gameState !== 2) {
+      return;
+    }
 
     if(this.state.currentFigure.type === -1) { // трябва да се създаде нова фигура
       const figureType = Math.floor(Math.random() * Math.floor(7));
@@ -146,10 +148,10 @@ export default class App extends React.Component {
 
         this.setState({currentFigure: figure}, () => {
           this.updateFigure(figureType, figure.position)
-        });
+        }, ()=> this.moveDown());
     }
     else { // move down
-      this.moveDown();
+      this.moveDown()
     }
   } // moveParts()
 
@@ -428,7 +430,7 @@ export default class App extends React.Component {
 
 
     }
-    if(code === 37) { // движение на фигурата едно квадратче в ляво
+    else if(code === 37) { // движение на фигурата едно квадратче в ляво
         let figure = this.state.currentFigure;
         if(figure.left === 0)  return;
         let blocks = figure.blocks;
@@ -449,7 +451,7 @@ export default class App extends React.Component {
         );
 
       }
-      if(code === 39) { // движение на фигурата едно квадратче в дясно
+      else if(code === 39) { // движение на фигурата едно квадратче в дясно
       let figure = this.state.currentFigure;
       let blocks = figure.blocks;
       let tiles = this.state.tiles;
@@ -473,14 +475,41 @@ export default class App extends React.Component {
         }
       )
     }
+    else if(code === 40) { // движение на фигурата квадратче надолу
+      this.moveFigureDown();
+    }
 
   }
   componentDidMount() { // Add Event Listener on compenent mount
     window.addEventListener("keyup", this.keyHandling);
-    setInterval( () => this.moveFigureDown(), 400);
+    //setTimeout( ()=> this.moveFigureDown(), this.state.currentSpeed);
+    this.interval = setInterval( () => this.checkInterval(), this.state.currentSpeed);
+    //setInterval( () => this.moveFigureDown(), 400);
   }
   componentWillUnmount() { // Remove event listener on compenent unmount
      window.removeEventListener("keyup", this.keyHandling);
+     clearInterval(this.interval);
+  }
+
+  checkInterval() {
+    this.moveFigureDown();
+
+    let speed = 500;
+    let score = this.state.score;
+    if(score < 20) speed = 500;
+    else if(score < 40) speed = 450;
+    else if(score < 60) speed = 400;
+    else if(score < 100) speed = 300;
+    else if(score < 150) speed = 200;
+    else speed = 100;
+
+    if(this.state.currentSpeed !== speed) {
+      clearInterval(this.interval);
+      this.setState({
+        currentSpeed: speed
+      }, ()=> this.interval = setInterval( () => this.checkInterval(), this.state.currentSpeed) );
+    }
+    
   }
 
   
