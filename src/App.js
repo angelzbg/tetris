@@ -407,7 +407,10 @@ export default class App extends React.Component {
 
       let tiles = this.state.tiles;
       for(let i=0; i<blocks.length; i++) {
-        if(tiles[blocks[i].i][blocks[i].j].isFilled) return;
+        let block = blocks[i];
+        if(block.i > -1 && block.i < 12 && block.j > -1 && block.j < 12) {
+          if(tiles[blocks[i].i][blocks[i].j].isFilled === true) return;
+        }
       }
     }
 
