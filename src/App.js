@@ -125,6 +125,7 @@ export default class App extends React.Component {
       score: 0,
       currentSpeed: 500
     }, () => {
+      this.interval = setInterval( () => this.checkInterval(), this.state.currentSpeed);
       this.moveFigureDown();
     });
 
