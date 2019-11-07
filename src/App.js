@@ -134,6 +134,7 @@ export default class App extends React.Component {
 
   moveFigureDown() {
     if(this.state.gameState !== 2) {
+      
       return;
     }
 
@@ -162,6 +163,7 @@ export default class App extends React.Component {
     for(let i=0; i<blocks.length; i++){
       if(blocks[i].i === 0) { // blok ot figurata e na posleden kvadrat
         this.fillTiles();
+        
         return;
       }
     }
@@ -173,6 +175,7 @@ export default class App extends React.Component {
       if(blocks[i].i > 11) continue;
       if(tiles[blocks[i].i-1][blocks[i].j].isFilled) {
         this.fillTiles();
+        
         return;
       }
     }
@@ -181,15 +184,7 @@ export default class App extends React.Component {
       this.setState({
         currentFigure: figure
       }, () => this.updateFigure(figure.type, figure.position));
-
-    // tova tuk shte pomogne za chisteneto, shte vidq kude da go metna
-    /*this.setState({
-      currentFigure: {
-        type: -1,
-        blocks: []
-      }
-    });*/
-    
+  
   } // moveDown()
 
   fillTiles() {
@@ -212,7 +207,6 @@ export default class App extends React.Component {
   } // fillTiles()
 
   checkLines() {
-    //da proverqva za celi redove i da gi opravq ()=> resetkam currentfigure
     let tiles = this.state.tiles;
 
     let scoresEarned = 0;
@@ -283,7 +277,6 @@ export default class App extends React.Component {
 
   updateFigure(figureType, position) { // positions 0 - default  nagore, 1 - na dqsno, 2 - nadolu, 3 - nalqvo, 4 - nagore
     let figure = this.state.currentFigure;
-    figure.type = figureType;
     const step = 8.333333333333333;
 
     let blocks = [];
@@ -396,18 +389,36 @@ export default class App extends React.Component {
       }
     }
 
+    /*
+    blocks.forEach( block => {
+      if(block.i > 11 || block.i < 0 || block.j > 11 || block.j < 0) {
+        
+        return;
+      }
+    });
+    //*/
+
+    if(figure.type !== -1) {
+    for(let i=0; i<blocks.length; i++) {
+      if(blocks[i].i < 0 || blocks[i].j > 11 || blocks[i].j < 0) {
+        
+        return;
+      }
+    }
+    }
+
 
     figure.blocks = blocks;
     figure.figHeight = figHeight;
     figure.figWidth = figWidth;
+    figure.type = figureType;
 
-    this.setState({currentFigure: figure});
+    this.setState({currentFigure: figure}, ()=> this.isMoving = false);
   } // updateFigure()
-
 
   keyHandling(event) {	    // Handle event
     //console.log("Key code: " + event.keyCode);
-    if(this.state.gameState !== 2 || this.state.isMoving) return;
+    if(this.state.gameState !== 2 && this.state.currentFigure === -1) return;
 
     let blocks = this.state.currentFigure.blocks;
     for(let i=0; i<blocks.length; i++) {
@@ -416,48 +427,41 @@ export default class App extends React.Component {
 
     const code = event.keyCode;
     if(code === 32) { // завъртане
-
-      this.setState({
-        isMoving: true
-      },
-      () => {
+      
         let figure = this.state.currentFigure;
 
         if(figure.position < 3) figure.position++;
         else figure.position = 0;
 
         this.setState({currentFigure: figure},
-          () => this.updateFigure(figure.type, figure.position),
-          () => this.setState({isMoving: false})
+          () => this.updateFigure(figure.type, figure.position)
         );
-      }
-      );
 
     }
     else if(code === 37) { // движение на фигурата едно квадратче в ляво
-        this.setState({ isMoving: true },
-          ()=>{
+      
             let figure = this.state.currentFigure;
-            if(figure.left === 0)  return;
+            if(figure.left === 0)  {
+              
+              return;
+            }
             let blocks = figure.blocks;
             let tiles = this.state.tiles;
 
             for(let i=0; i<blocks.length; i++){
-              if(tiles[blocks[i].i][blocks[i].j-1].isFilled) return;
+              if(tiles[blocks[i].i][blocks[i].j-1].isFilled) {
+                
+                return;
+              }
             }
             figure.left--;
         
             this.setState({ currentFigure: figure, isMoving: false },
-              () => this.updateFigure(figure.type, figure.position),
-              () => this.setState({isMoving: false})
+              () => this.updateFigure(figure.type, figure.position)
             );
-          }
-        );
 
       }
       else if(code === 39) { // движение на фигурата едно квадратче в дясно
-      this.setState({ isMoving: true },
-        () => {
           let figure = this.state.currentFigure;
           let blocks = figure.blocks;
           let tiles = this.state.tiles;
@@ -465,31 +469,27 @@ export default class App extends React.Component {
           for(let i=0; i<blocks.length; i++)
           {
             if(blocks[i].j === 11) {
-              this.setState({isMoving: false});
+              
               return;
             }
           }
 
           for(let i=0; i<blocks.length; i++){
             if(tiles[blocks[i].i][blocks[i].j+1].isFilled) {
-              this.setState({isMoving: false});
+              
               return;
             }
           }
           figure.left++;
       
           this.setState({ currentFigure: figure},
-            () => this.updateFigure(figure.type, figure.position),
-            () => this.setState({isMoving: false})
+            () => this.updateFigure(figure.type, figure.position)
           );
-        }
-      )
     }
     else if(code === 40) { // движение на фигурата квадратче надолу
-      this.setState({isMoving: true},
-        () => this.moveFigureDown(),
-        () => this.setState({isMoving: false})
-      );
+      
+      this.moveFigureDown();
+      
     }
 
   }
@@ -498,6 +498,7 @@ export default class App extends React.Component {
     //setTimeout( ()=> this.moveFigureDown(), this.state.currentSpeed);
     this.interval = setInterval( () => this.checkInterval(), this.state.currentSpeed);
     //setInterval( () => this.moveFigureDown(), 400);
+    
   }
   componentWillUnmount() { // Remove event listener on compenent unmount
      window.removeEventListener("keyup", this.keyHandling);
