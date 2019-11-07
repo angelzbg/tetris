@@ -40,6 +40,8 @@ export default class App extends React.Component {
     let _left = -8.333333333333333;
     let _bottom = -8.333333333333333;
 
+    let figure = this.state.currentFigure;
+
     return (
       <center>
       <div style={{position: "relative", width: "100vmin", height: "100vmin"}}>
@@ -62,8 +64,16 @@ export default class App extends React.Component {
         }
 
         {
-          this.state.gameState === 2 && this.state.currentFigure.type !== -1 ?
-          this.state.currentFigure.visual
+          this.state.gameState === 2 && figure.type !== -1 && figure.hasOwnProperty('blocks') ?
+          <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: figure.figWidth, height: figure.figHeight}}>
+            {
+              figure.blocks.map(
+                ( (block, index) =>
+                  <div key={index+"block"} className="block" style={{left: ((block.j-figure.left)*step)+"vmin", bottom: ((block.i-figure.bottom)*step)+"vmin", backgroundColor: this.state.currentFigure.color}}>{this.state.pseudoBorderDiv}</div>
+                )
+              )
+            }
+          </div>
           : this.props.textOrHtml
         }
 
@@ -259,226 +269,120 @@ export default class App extends React.Component {
     figure.type = figureType;
     const step = 8.333333333333333;
 
-    let temp = <div></div>;
     let blocks = [];
+    let figWidth = "", figHeight = "";
 
     if(figureType === 0) {
-
       if(position === 0 || position === 2) {
-        temp = 
-          <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: (4*step)+"vmin", height: step+"vmin"}}>
-            <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-            <div className="block" style={{left: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-            <div className="block" style={{left: (step*2)+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-            <div className="block" style={{left: (step*3)+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          </div>;
-          blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom, j: figure.left+2},{i: figure.bottom, j: figure.left+3} ];
+        figWidth = (4*step)+"vmin";
+        figHeight = step+"vmin";
+        blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom, j: figure.left+2},{i: figure.bottom, j: figure.left+3} ];
       } else {
-        temp = 
-            <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: step+"vmin", height: (4*step)+"vmin"}}>
-              <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-              <div className="block" style={{left: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-              <div className="block" style={{left: 0, top: (step*2)+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-              <div className="block" style={{left: 0, top: (step*3)+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-            </div>;
-            blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom+1, j: figure.left}, {i: figure.bottom+2, j: figure.left},{i: figure.bottom+3, j: figure.left} ];
+        figWidth = step+"vmin";
+        figHeight = (4*step)+"vmin";
+        blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom+1, j: figure.left}, {i: figure.bottom+2, j: figure.left},{i: figure.bottom+3, j: figure.left} ];
       }
-
     }
     else if(figureType === 1) {
-
-
       if(position === 0) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: (3*step)+"vmin", height: (step*2)+"vmin"}}>
-          <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: step+"vmin", bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: (step*2)+"vmin", bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (3*step)+"vmin";
+        figHeight = (step*2)+"vmin";
         blocks = [ {i: figure.bottom+1, j: figure.left}, {i: figure.bottom, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom, j: figure.left+2} ];
       }
       else if(position === 1) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: (2*step)+"vmin", height: (step*3)+"vmin"}}>
-          <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, top: (step*2)+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (2*step)+"vmin";
+        figHeight = (step*3)+"vmin";
         blocks = [ {i: figure.bottom+2, j: figure.left+1}, {i: figure.bottom, j: figure.left}, {i: figure.bottom+1, j: figure.left}, {i: figure.bottom+2, j: figure.left} ];
       }
       else if(position === 2) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: (3*step)+"vmin", height: (step*2)+"vmin"}}>
-          <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: (step*2)+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: (step*2)+"vmin", bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (3*step)+"vmin";
+        figHeight = (step*2)+"vmin";
         blocks = [ {i: figure.bottom, j: figure.left+2}, {i: figure.bottom+1, j: figure.left}, {i: figure.bottom+1, j: figure.left+1}, {i: figure.bottom+1, j: figure.left+2} ];
       }
       else if(position === 3) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (3*step)+"vmin", width: (step*2)+"vmin"}}>
-          <div className="block" style={{left: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: step+"vmin", top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: step+"vmin", top: (step*2)+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*2)+"vmin";
+        figHeight = (3*step)+"vmin";
         blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom+1, j: figure.left+1}, {i: figure.bottom+2, j: figure.left+1} ];
       }
-
     }
     else if(figureType === 2) {
-      
       if(position === 0) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: (3*step)+"vmin", height: (step*2)+"vmin"}}>
-          <div className="block" style={{right: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: step+"vmin", bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: (step*2)+"vmin", bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (3*step)+"vmin";
+        figHeight = (step*2)+"vmin";
         blocks = [ {i: figure.bottom+1, j: figure.left+2}, {i: figure.bottom, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom, j: figure.left+2} ];
       }
       else if(position === 1) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", width: (2*step)+"vmin", height: (step*3)+"vmin"}}>
-          <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, top: (step*2)+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{right: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (2*step)+"vmin";
+        figHeight = (step*3)+"vmin";
         blocks = [ {i: figure.bottom, j: figure.left+1}, {i: figure.bottom, j: figure.left}, {i: figure.bottom+1, j: figure.left}, {i: figure.bottom+2, j: figure.left} ];
       }
       else if(position === 2) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (2*step)+"vmin", width: (step*3)+"vmin"}}>
-          <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: (step*2)+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*3)+"vmin";
+        figHeight = (2*step)+"vmin";
         blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom+1, j: figure.left}, {i: figure.bottom+1, j: figure.left+1}, {i:figure.bottom+1, j: figure.left+2} ];
       }
       else if(position === 3) {
-        temp = 
-        <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (3*step)+"vmin", width: (step*2)+"vmin"}}>
-          <div className="block" style={{right: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{right: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{right: 0, top: (step*2)+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-          <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*2)+"vmin";
+        figHeight = (3*step)+"vmin";
         blocks = [ {i:figure.bottom+2, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom+1, j: figure.left+1}, {i: figure.bottom+2, j: figure.left+1} ];
       }
-
     }
     else if(figureType === 3) {
-
-      temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (2*step)+"vmin", width: (step*2)+"vmin"}}>
-      <div className="block" style={{right: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-      <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-      <div className="block" style={{right: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-      <div className="block" style={{left: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-      </div>;
+      figWidth = (step*2)+"vmin";
+      figHeight = (2*step)+"vmin";
       blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom+1, j: figure.left}, {i:figure.bottom, j: figure.left+1}, {i: figure.bottom+1, j: figure.left+1} ];
-      
     }
     else if(figureType === 4) {
-
       if(position === 0 || position === 2) {
-
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (2*step)+"vmin", width: (step*3)+"vmin"}}>
-        <div className="block" style={{left: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{left: step+"vmin", bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*3)+"vmin";
+        figHeight = (2*step)+"vmin";
         blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom+1, j: figure.left+1}, {i: figure.bottom+1, j: figure.left+2} ];
       }
       else {
-
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (3*step)+"vmin", width: (step*2)+"vmin"}}>
-        <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{left: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, bottom: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*2)+"vmin";
+        figHeight = (3*step)+"vmin";
         blocks = [ {i: figure.bottom+1, j: figure.left}, {i: figure.bottom+2, j: figure.left}, {i: figure.bottom, j: figure.left+1}, {i: figure.bottom+1, j: figure.left+1} ];
       }
-      
     }
     else if(figureType === 5) {
-
       if(position === 0) {
-
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (2*step)+"vmin", width: (step*3)+"vmin"}}>
-        <div className="block" style={{bottom: 0, left: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{bottom: 0, left: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{bottom: 0, right: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*3)+"vmin";
+        figHeight = (2*step)+"vmin";
         blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom, j:figure.left+1}, {i: figure.bottom, j: figure.left+2}, {i: figure.bottom+1, j: figure.left+1} ];
       }
       else if(position === 1) {
-
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (3*step)+"vmin", width: (step*2)+"vmin"}}>
-        <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{left: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{left: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, bottom: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*2)+"vmin";
+        figHeight = (3*step)+"vmin";
         blocks = [ {i: figure.bottom, j: figure.left}, {i: figure.bottom+1, j: figure.left}, {i:figure.bottom+2, j:figure.left}, {i:figure.bottom+1, j: figure.left+1} ];
       }
       else if(position === 2) {
-
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (2*step)+"vmin", width: (step*3)+"vmin"}}>
-        <div className="block" style={{top: 0, left: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{top: 0, left: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{top: 0, right: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: step+"vmin", bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*3)+"vmin";
+        figHeight = (2*step)+"vmin";
         blocks = [ {i:figure.bottom, j:figure.left+1}, {i:figure.bottom+1, j: figure.left}, {i:figure.bottom+1, j: figure.left+1}, {i:figure.bottom+1, j: figure.left+2} ];
       }
       else if(position === 3) {
-
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (3*step)+"vmin", width: (step*2)+"vmin"}}>
-        <div className="block" style={{right: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{lrgy: 0, bottom: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*2)+"vmin";
+        figHeight = (3*step)+"vmin";
         blocks = [ {i:figure.bottom, j:figure.left+1}, {i:figure.bottom+1, j:figure.left+1}, {i:figure.bottom+2, j:figure.left+1}, {i:figure.bottom+1, j:figure.left} ];
       }
-      
     }
     else if(figureType === 6) {
       if(position === 0 || position === 2) {
-
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (2*step)+"vmin", width: (step*3)+"vmin"}}>
-        <div className="block" style={{left: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{left: step+"vmin", top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: step+"vmin", top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*3)+"vmin";
+        figHeight = (2*step)+"vmin";
         blocks = [ {i:figure.bottom, j:figure.left+1}, {i:figure.bottom, j:figure.left+2}, {i:figure.bottom+1, j: figure.left}, {i: figure.bottom+1, j: figure.left+1} ];
       }
       else if(position === 1 || position === 3) {
-        temp = <div style={{position: "absolute", left: (figure.left*step)+"vmin", bottom: (figure.bottom*step)+"vmin", height: (3*step)+"vmin", width: (step*2)+"vmin"}}>
-        <div className="block" style={{left: 0, bottom: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{left: 0, bottom: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, top: 0, backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        <div className="block" style={{right: 0, top: step+"vmin", backgroundColor: figure.color}}>{this.state.pseudoBorderDiv}</div>
-        </div>;
+        figWidth = (step*2)+"vmin";
+        figHeight = (3*step)+"vmin";
         blocks = [ {i: figure.bottom, j:figure.left}, {i:figure.bottom+1, j:figure.left}, {i:figure.bottom+1, j: figure.left+1}, {i:figure.bottom+2, j:figure.left+1} ];
       }
-      
     }
 
 
     figure.blocks = blocks;
-    figure.visual = temp;
+    figure.figHeight = figHeight;
+    figure.figWidth = figWidth;
 
     this.setState({currentFigure: figure});
   } // updateFigure()
