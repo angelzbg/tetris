@@ -401,12 +401,14 @@ export default class App extends React.Component {
     //*/
 
     if(figure.type !== -1) {
-    for(let i=0; i<blocks.length; i++) {
-      if(blocks[i].i < 0 || blocks[i].j > 11 || blocks[i].j < 0) {
-        
-        return;
+      for(let i=0; i<blocks.length; i++) {
+        if(blocks[i].i < 0 || blocks[i].j > 11 || blocks[i].j < 0) return;
       }
-    }
+
+      let tiles = this.state.tiles;
+      for(let i=0; i<blocks.length; i++) {
+        if(tiles[blocks[i].i][blocks[i].j].isFilled) return;
+      }
     }
 
 
