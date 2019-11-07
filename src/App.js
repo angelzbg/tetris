@@ -417,66 +417,79 @@ export default class App extends React.Component {
     const code = event.keyCode;
     if(code === 32) { // завъртане
 
+      this.setState({
+        isMoving: true
+      },
+      () => {
+        let figure = this.state.currentFigure;
 
-      let figure = this.state.currentFigure;
+        if(figure.position < 3) figure.position++;
+        else figure.position = 0;
 
-      if(figure.position < 3) figure.position++;
-      else figure.position = 0;
-
-      this.setState({currentFigure: figure},
-        () => this.updateFigure(figure.type, figure.position)
+        this.setState({currentFigure: figure},
+          () => this.updateFigure(figure.type, figure.position),
+          () => this.setState({isMoving: false})
+        );
+      }
       );
-
-
 
     }
     else if(code === 37) { // движение на фигурата едно квадратче в ляво
-        let figure = this.state.currentFigure;
-        if(figure.left === 0)  return;
-        let blocks = figure.blocks;
-        let tiles = this.state.tiles;
-
-        for(let i=0; i<blocks.length; i++){
-          if(tiles[blocks[i].i][blocks[i].j-1].isFilled) return;
-        }
-
         this.setState({ isMoving: true },
           ()=>{
+            let figure = this.state.currentFigure;
+            if(figure.left === 0)  return;
+            let blocks = figure.blocks;
+            let tiles = this.state.tiles;
+
+            for(let i=0; i<blocks.length; i++){
+              if(tiles[blocks[i].i][blocks[i].j-1].isFilled) return;
+            }
             figure.left--;
         
             this.setState({ currentFigure: figure, isMoving: false },
-              () => this.updateFigure(figure.type, figure.position)
+              () => this.updateFigure(figure.type, figure.position),
+              () => this.setState({isMoving: false})
             );
           }
         );
 
       }
       else if(code === 39) { // движение на фигурата едно квадратче в дясно
-      let figure = this.state.currentFigure;
-      let blocks = figure.blocks;
-      let tiles = this.state.tiles;
-
-      for(let i=0; i<blocks.length; i++)
-      {
-        if(blocks[i].j === 11) return;
-      }
-
-      for(let i=0; i<blocks.length; i++){
-        if(tiles[blocks[i].i][blocks[i].j+1].isFilled) return;
-      }
-
       this.setState({ isMoving: true },
         () => {
+          let figure = this.state.currentFigure;
+          let blocks = figure.blocks;
+          let tiles = this.state.tiles;
+
+          for(let i=0; i<blocks.length; i++)
+          {
+            if(blocks[i].j === 11) {
+              this.setState({isMoving: false});
+              return;
+            }
+          }
+
+          for(let i=0; i<blocks.length; i++){
+            if(tiles[blocks[i].i][blocks[i].j+1].isFilled) {
+              this.setState({isMoving: false});
+              return;
+            }
+          }
           figure.left++;
       
-          this.setState({ currentFigure: figure, isMoving: false },
-            () => this.updateFigure(figure.type, figure.position)
+          this.setState({ currentFigure: figure},
+            () => this.updateFigure(figure.type, figure.position),
+            () => this.setState({isMoving: false})
           );
         }
       )
     }
     else if(code === 40) { // движение на фигурата квадратче надолу
-      this.moveFigureDown();
+      this.setState({isMoving: true},
+        () => this.moveFigureDown(),
+        () => this.setState({isMoving: false})
+      );
     }
 
   }
