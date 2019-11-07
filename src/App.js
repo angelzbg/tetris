@@ -23,13 +23,14 @@ export default class App extends React.Component {
       gameState: 1, // 1 = not started (initial), 2 = started, 3 = win, 4 = lose
       isMoving: false,
       tiles: tiles,
-      score: 0,
       colors: [ "#3399ff", "#0000e6", "#ff9933", "#ffff4d", "#66ff66", "#cc33ff", "#e60000" ],
       currentFigure: {
         type: -1,
         blocks: []
       },
-      pseudoBorderDiv: <div style={{position: "relative", width: "calc(100% - 2px)", height: "calc(100% - 2px)", border: "1px solid white",}} />
+      pseudoBorderDiv: <div style={{position: "relative", width: "calc(100% - 2px)", height: "calc(100% - 2px)", border: "1px solid white",}} />,
+      score: 0,
+      level: 1
     }
 
     this.keyHandling = this.keyHandling.bind(this);
@@ -85,13 +86,21 @@ export default class App extends React.Component {
       }
       {
           this.state.gameState === 3 ?
-          <p style={{position: "absolute", left: 0, top: "40px"}}>YOU WON</p>
+          <p style={{position: "absolute", left: 0, top: "40px"}}>Game Over! You reached level {this.state.level}</p>
           : this.state.gameState === 4 ?
           <p style={{position: "absolute", left: 0, top: "40px"}}>YOU LOST</p>
           : this.props.textOrHtml
       }
       <p style={{position: "absolute", left: 0, top: "60px"}}>Rotation - SPACEBAR</p>
       <p style={{position: "absolute", left: 0, top: "80px"}}>Movement - Arrows R L</p>
+      {
+        this.state.gameState !== 1 ?
+        <div style={{position: "absolute", left:"10px", top: "120px", backgroundColor: "#0099ff", paddingLeft: "10px", paddingRight: "10px", borderRadius: "5px"}}>
+          <p>Score: {this.state.score}</p>
+          <p>Level: {this.state.level}</p>
+        </div>
+        : this.props.textOrHtml
+      }
       </center>
     )
   } // render()
@@ -113,7 +122,8 @@ export default class App extends React.Component {
     this.setState({
       gameState: 2, // 1 = not started (initial), 2 = started, 3 = win, 4 = lose
       tiles: tiles,
-      score: 0
+      score: 0,
+      level: 1
     }, () => {
       this.moveFigureDown();
     });
@@ -203,6 +213,9 @@ export default class App extends React.Component {
     //da proverqva za celi redove i da gi opravq ()=> resetkam currentfigure
     let tiles = this.state.tiles;
 
+    let scoresEarned = 0;
+
+    for(let topline=11; topline>-1; topline--) {
     for(let i=0; i<12; i++)
     {
       let isLine = true;
@@ -213,7 +226,7 @@ export default class App extends React.Component {
         }
       } // inner
       if(isLine) {
-
+        scoresEarned+=12;
         for(let r=i; r<11; r++) {
           for(let c=0; c<12; c++) {
             tiles[r][c] = {
@@ -224,7 +237,7 @@ export default class App extends React.Component {
         }
 
         for(let c=0; c<12; c++) { // reskane na nai-gorniq red
-          tiles[11][c] = {
+          tiles[topline][c] = {
             isFilled: false,
             color: c % 2 === 0 ? "#e6e6ff" : "#f2f2f2"
           }
@@ -232,6 +245,7 @@ export default class App extends React.Component {
       }
 
     } // outer
+    } // topline outer
 
 
     let isWon = true;
@@ -259,6 +273,7 @@ export default class App extends React.Component {
         type: -1,
         blocks: []
       },
+      score: this.state.score+scoresEarned,
       gameState: isWon ? 3 : isLose ? 4 : 2
     });
 
