@@ -119,6 +119,8 @@ export default class App extends React.Component {
       } // inner
     } // outer
 
+    clearInterval(this.interval);
+
     this.setState({
       gameState: 2, // 1 = not started (initial), 2 = started, 3 = win, 4 = lose
       tiles: tiles,
@@ -135,7 +137,6 @@ export default class App extends React.Component {
 
   moveFigureDown() {
     if(this.state.gameState !== 2) {
-      
       return;
     }
 
@@ -496,10 +497,6 @@ export default class App extends React.Component {
   }
   componentDidMount() { // Add Event Listener on compenent mount
     window.addEventListener("keyup", this.keyHandling);
-    //setTimeout( ()=> this.moveFigureDown(), this.state.currentSpeed);
-    this.interval = setInterval( () => this.checkInterval(), this.state.currentSpeed);
-    //setInterval( () => this.moveFigureDown(), 400);
-    
   }
   componentWillUnmount() { // Remove event listener on compenent unmount
      window.removeEventListener("keyup", this.keyHandling);
